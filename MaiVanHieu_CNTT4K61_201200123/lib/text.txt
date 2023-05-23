@@ -1,0 +1,122 @@
+﻿Scaffold-DbContext "Data Source=DESKTOP-O4EGSIC\SQLEXPRESS;Initial Catalog=QLBanHangQuanAo;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
+
+
+// Chú ý tên thuộc tính khi dùng ajax
+
+@Url.Content("~/assets/imagesKT/" + Model.Anh)
+
+
+@Html.Partial("_Footer")
+
+@await Component.InvokeAsync("ShowMenu")
+
+<a asp-action="action" asp-controller="Home">    </a>
+
+@foreach(var item in Model){
+
+
+}
+
+// the a call action
+asp-controller="Home" asp-action="detail" asp-route-masp="@item.MaSanPham"
+
+
+// code in default
+@foreach (var item in Model)
+{
+    var url = "https://localhost:44388/api/SanPhamAPI?maSP=" + item.MaPhanLoaiPhu;
+    <li>
+        <a onclick="actionAPI('@url')">@item.TenPhanLoaiPhu</a>
+    </li>
+}
+
+// ajax
+<script>
+    const actionAPI = (url) => {
+    $.ajax({
+    type: "GET", url: url, dataType: "json", success: (data) => {
+        let str = "";
+        $.each(data, (key, val) => {
+            str += `<div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+									src="../imageCauthu/images/${val.anh}"
+                </div>`
+        });
+        $("#show_body").html(str);
+        }
+    });
+}
+</script>
+
+
+// component.cs
+namespace MaiVanHieu_CNTT4K61_201200123.Views.Shared.Components.ShowMenu
+{
+    [ViewComponent]
+    public class ShowMenu : ViewComponent
+    {
+        public ShowMenu() { }
+
+        public IViewComponentResult Invoke()
+        {
+            return View();
+        }
+    }
+}
+
+
+#regular
+[RegularExpression("^[a-zA-Z]+$", ErrorMessage = "Chi duoc nhap chu")]
+
+[RegularExpression(@"^[a-zA-Z].*$", ErrorMessage = "Tên sản phẩm phải bắt đầu bằng một chữ cái.")]
+
+[Range(0, long.MaxValue, ErrorMessage = "Vui lòng nhập giá trị số.")]
+
+[RegularExpression(@"\w+\.jpg", ErrorMessage = "Phải có đuôi là .jpg")]
+
+[RegularExpression(@"^\d+$", ErrorMessage = "Don gia ban nho nhat phai la so")]
+
+[Required(ErrorMessage = "MaSanPham khong duoc bo trong")]
+
+[Range(0, 1000000000, ErrorMessage = "GiaNhap phai nam trong khoang tu 0 den 1 ty dong")]
+
+[StringLength(50, MinimumLength = 5, ErrorMessage = "TenSanPham phai co do dai tu 5 den 50 ky tu")]
+
+[EmailAddress(ErrorMessage = "Dia chi email khong hop le")]
+
+
+
+
+@foreach (var item in Model)
+{
+    var url = "https://localhost:7135/api/sanphams/loais/" + item.MaPhanLoai;
+    <li>
+        <a onclick="actionAPI('@url')">
+            @item.PhanLoaiChinh
+        </a>
+    </li>
+}
+
+<script>
+    const actionAPI = (url) => {
+        $.ajax({
+            type: "GET", url: url, dataType: "json", success: (data) => {
+                let str = "";
+                $.each(data, (key, val) => {
+                    str += `
+                                <div class="col-lg-3 mb-4 text-center">
+                    <div class="product-entry border">
+                        <a href="#" class="prod-img">
+                            <img src="/assets/imagesKT/${val.anhDaiDien}" class="img-fluid" alt="Free html5 bootstrap 4 template">
+                        </a>
+                        <div class="desc">
+                                <h2><a href="#">${val.tenSanPham} < /a></h2 >
+                                <span class= "price" > ${val.donGiaBanNhoNhat}</span>
+                        </div>
+                    </div>
+                </div>  `
+                });
+                $("#show_body").html(str);
+            }
+        });
+    }
+</script>
